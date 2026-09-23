@@ -29,7 +29,7 @@ ros2 launch amr multi_amr_project_launch.launch.py
 ```
 ### 2.5 Comandos para activar el servidor local de la página web de monitoreo y control de los robots (Terminal 2)
 ```bash
-cd ~/Monitoreo_Control_web_Multirobot/interfaces/web
+cd ~/Interfaces_Web_Movil_ROS/interfaces/web
 ```
 
 ```bash
