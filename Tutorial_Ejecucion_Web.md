@@ -5,29 +5,25 @@
 * Tener instalado Gazebo Classic
 * Tener instalado los paquetes `Nav2`, `rosbridge_server` y `web_video_server`
 ## 2. Pasos para inicializar el sistema
-### 2.1 Clonación del repositorio
-```bash
-git clone https://github.com/lfvargas20/Monitoreo_Control_Web_Multirobot.git
-```
-### 2.2 Eliminación de las carpetas build, install y log
+### 2.1 Eliminación de las carpetas build, install y log
 ```bash
 cd ~/Interfaces_Web_Movil_ROS
 ```
 ```bash
 rm -rf /build /install /log
 ```
-### 2.3 Compilación
+### 2.2 Compilación
 ```bash
 colcon build --symlink-install
 ```
 ```bash
 source install/setup.bash
 ```
-### 2.4 Comando de activación del proyecto (Terminal 1)
+### 2.3 Comando de activación del proyecto (Terminal 1)
 ```bash
 ros2 launch amr multi_amr_project_launch.launch.py
 ```
-### 2.5 Comandos para activar el servidor local de la página web de monitoreo y control de los robots (Terminal 2)
+### 2.4 Comandos para activar el servidor local de la página web de monitoreo y control de los robots (Terminal 2)
 ```bash
 cd ~/Interfaces_Web_Movil_ROS/interfaces/web
 ```
