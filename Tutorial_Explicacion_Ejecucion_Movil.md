@@ -1,4 +1,4 @@
-Documentación APP turtlebot4_app
+
  
 # Documentación de Aplicación  TurtleBot4 Control & Video
 
@@ -163,14 +163,13 @@ Un emulador en Flutter es útil porque permite simular dispositivos móviles par
 
 [Emulador.webm](https://github.com/user-attachments/assets/3fe0d5be-e438-4175-a0ec-ae315fd68dba)
 
-### 4. **Clonar el repositorio**:
-
-Crea un directorio en donde vayas almacenar el repositorio y porteriormente clonalo con el siguiente comando
-```bash
-git clone https://github.com/greicyd/turtlebot4_app.git
-```
+### 4. **Ejecutar la aplicación**:
 
  Descargar las dependencias que se encuentran en el archivo pubspec.yaml con el siguiente comando, esto permitirá descargar las dependencias necesarias para el proyecto 
+```bash
+cd ~/Interfaces_Web_Movil_ROS/interfaces/turtlebot4_app-main
+```
+ 
  ```bash
 flutter pub get 
 ```
