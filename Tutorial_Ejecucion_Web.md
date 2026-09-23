@@ -11,7 +11,7 @@ git clone https://github.com/lfvargas20/Monitoreo_Control_Web_Multirobot.git
 ```
 ### 2.2 Eliminación de las carpetas build, install y log
 ```bash
-cd ~/Monitoreo_Control_web_Multirobot
+cd ~/Interfaces_Web_Movil_ROS
 ```
 ```bash
 rm -rf /build /install /log
