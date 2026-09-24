@@ -2,15 +2,15 @@
 
 Este repositorio dispone de tutoriales de las interfaces web y movil
 
-## Comando para clonar el repositorio
+## 1. Comando para clonar el repositorio
 ```bash
 git clone https://github.com/lfvargas20/Interfaces_Web_Movil_ROS.git
 ```
 
-## Web
-[Tutorial de Explicación](Tutorial_Explicación_Web.md)
+## 2. Tutoriales de la interfaz Web
+[Tutorial de Explicación](Tutorial_Explicacion_Web.md)
 
 [Tutorial de Ejecución](Tutorial_Ejecucion_Web.md)
 
-## Movil
+## Tutorial de la interfaz móvil
 [Tutorial de Explicación y Ejecución](Tutorial_Explicacion_Ejecucion_Movil.md)
