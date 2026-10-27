@@ -112,21 +112,15 @@ const scanTopic3 = new ROSLIB.Topic({
 });
 
 var velTopics = [
-    { name: '/amr_0/cmd_vel', listener: null, publisher: null },
-    { name: '/amr_1/cmd_vel', listener: null, publisher: null },
-    { name: '/amr_2/cmd_vel', listener: null, publisher: null },
-    { name: '/amr_3/cmd_vel', listener: null, publisher: null }
+    { name: '/amr_0/cmd_vel', publisher: null },
+    { name: '/amr_1/cmd_vel', publisher: null },
+    { name: '/amr_2/cmd_vel', publisher: null },
+    { name: '/amr_3/cmd_vel', publisher: null }
 ]
 
 var activeTopic = null;
 
 function initTopic(robot) {
-    robot.listener = new ROSLIB.Topic({
-        ros: ros,
-        name: robot.name,
-        messageType: 'geometry_msgs/Twist'
-    });
-
     robot.publisher = new ROSLIB.Topic({
         ros: ros,
         name: robot.name,
@@ -135,11 +129,8 @@ function initTopic(robot) {
 }
 
 function deactivateTopic(robot) {
-    if (robot.listener) {
-        robot.listener.unsubscribe();
-        robot.listener = null;
-    }
     if (robot.publisher) {
+        robot.publisher.unsubscribe();
         robot.publisher = null;
     }
 }
@@ -306,16 +297,10 @@ var cancelClient4 = new ROSLIB.Service({
 });
 
 
-
-
-
 let robot1 = document.getElementById('robot1');
 let robot2 = document.getElementById('robot2');
 let robot3 = document.getElementById('robot3');
 let robot4 = document.getElementById('robot4');
-
-
-
 
 
 function showRobot1() {
@@ -1116,7 +1101,6 @@ function showRobot4() {
 
 
 let mapData = null;
-const canvas = document.getElementById('mapCanvas');
 
 
 const canvas_label = document.getElementById('labelCanvas');
@@ -1129,12 +1113,6 @@ const legend = document.getElementById('legend');
 legend.style.position = 'absolute';
 legend.style.top = '-125px';
 legend.style.left = '500px';
-
-
-const resetButton = document.getElementById('reset-button');
-resetButton.style.position = 'absolute';
-resetButton.style.top = '350px';
-resetButton.style.left = '868px';
 
 
 canvas_goal.style.position = 'absolute';
@@ -1160,9 +1138,6 @@ canvas_goal.width = width;
 canvas_goal.height = height;
 
 
-const margin = { top: 0, right: 0, bottom: 0, left: 0 };
-const plotWidth = width - margin.left - margin.right;
-const plotHeight = height - margin.top - margin.bottom;
 
 const gridColor = '#000000';
 const axisColor = '#333';
@@ -1177,25 +1152,22 @@ const yTicks = 6;
 
 
 function xScale(x) {
-    return margin.left + (x - xMin) / (xMax - xMin) * plotWidth;
+    return (x - xMin) / (xMax - xMin) * width;
 }
 
 function yScale(y) {
-    return margin.top + plotHeight - (y - yMin) / (yMax - yMin) * plotHeight;
+    return height - (y - yMin) / (yMax - yMin) * height;
 }
 
 function drawGridOnlyPlot() {
     // Clear the canvas
     ctx.clearRect(0, 0, width, height);
 
-    // Draw plot background
-    //ctx.fillStyle = 'white';
-    //ctx.fillRect(margin.left, margin.top, plotWidth, plotHeight);
 
     // Draw border
     ctx.strokeStyle = axisColor;
     ctx.lineWidth = 1;
-    ctx.strokeRect(margin.left, margin.top, plotWidth, plotHeight);
+    ctx.strokeRect(0, 0, 0, 0);
 
     // Draw grid lines
     ctx.strokeStyle = gridColor;
@@ -1207,8 +1179,8 @@ function drawGridOnlyPlot() {
         const canvasX = xScale(x);
 
         ctx.beginPath();
-        ctx.moveTo(canvasX, margin.top);
-        ctx.lineTo(canvasX, margin.top + plotHeight);
+        ctx.moveTo(canvasX, 0);
+        ctx.lineTo(canvasX, height);
         ctx.stroke();
     }
 
@@ -1218,23 +1190,37 @@ function drawGridOnlyPlot() {
         const canvasY = yScale(y);
 
         ctx.beginPath();
-        ctx.moveTo(margin.left, canvasY);
-        ctx.lineTo(margin.left + plotWidth, canvasY);
+        ctx.moveTo(0, canvasY);
+        ctx.lineTo(width, canvasY);
         ctx.stroke();
     }
 }
 
-function setAxisRanges(newXMin, newXMax, newYMin, newYMax) {
-    xMin = newXMin;
-    xMax = newXMax;
-    yMin = newYMin;
-    yMax = newYMax;
-    drawGridOnlyPlot(); // Redraw with new ranges
-}
-
-setAxisRanges(0, 10, -1, 1);
 drawGridOnlyPlot();
 
+let x1 = 0;
+let y1 = 0;
+
+let x2 = 0;
+let y2 = 0;
+
+let x3 = 0;
+let y3 = 0;
+
+robotPoseMapTopic1.subscribe(function(message) {
+    x1 = message.pose.pose.position.x;
+    y1 = message.pose.pose.position.y;
+});
+
+robotPoseMapTopic2.subscribe(function(message) {
+    x2 = message.pose.pose.position.x;
+    y2 = message.pose.pose.position.y;
+});
+
+robotPoseMapTopic3.subscribe(function(message) {
+    x3 = message.pose.pose.position.x;
+    y3 = message.pose.pose.position.y;
+});
 
 mapTopic.subscribe(function(message) {
 
@@ -1286,7 +1272,6 @@ mapTopic.subscribe(function(message) {
     }
 
     mapData = imageData;
-    //ctx3.putImageData(imageData, 0, 0);
 
     // Retrieve stored paths from localStorage or initialize empty paths
     let robotPaths = {
@@ -1315,16 +1300,10 @@ mapTopic.subscribe(function(message) {
     robotPoseMapTopic.subscribe(function(message) {
         ctx3.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Redraw the map (you may need to store the map image data and redraw it here)
+    // Redraw the map
         ctx3.putImageData(mapData, 0, 0);
         const x = message.pose.pose.position.x;
         const y = message.pose.pose.position.y;
-
-
-        //const x_fixed = (parseFloat(x) + 2).toFixed(2);
-        //const y_fixed = (parseFloat(y) + 0.5).toFixed(2);
-
-
 
         const px = scaleFactor*((x/resolution) + 182.0112);
         const py = scaleFactor*((y/resolution) + 188.19292);
@@ -1340,42 +1319,31 @@ mapTopic.subscribe(function(message) {
 
         // Add the current position to the path
         robotPaths.robot0.push({ x: px, y: canvas.height - py });
-
-
         // Draw the path
         drawRobotPath(ctx3, robotPaths.robot0, 'blue');
-
         // Draw the current position
         ctx3.fillStyle = 'blue';
         ctx3.beginPath();
         ctx3.arc(px, canvas.height - py, 5.0, 0, 2 * Math.PI); // Larger circle for the current position
         ctx3.fill();
-
+        
+        
         robotPaths.robot1.push({ x: px1, y: canvas.height - py1 });
-
-
-
         drawRobotPath(ctx3, robotPaths.robot1, 'red');
-
         ctx3.fillStyle = 'red';
         ctx3.beginPath();
         ctx3.arc(px1, canvas.height - py1, 5.0, 0, 2 * Math.PI);
         ctx3.fill();
 
         robotPaths.robot2.push({ x: px2, y: canvas.height - py2 });
-
-
         drawRobotPath(ctx3, robotPaths.robot2, 'green');
-
         ctx3.fillStyle = 'green';
         ctx3.beginPath();
         ctx3.arc(px2, canvas.height - py2, 5.0, 0, 2 * Math.PI);
         ctx3.fill();
 
         robotPaths.robot3.push({ x: px3, y: canvas.height - py3 });
-
         drawRobotPath(ctx3, robotPaths.robot3, 'orange');
-
         ctx3.fillStyle = 'orange';
         ctx3.beginPath();
         ctx3.arc(px3, canvas.height - py3, 5.0, 0, 2 * Math.PI);
@@ -1384,35 +1352,6 @@ mapTopic.subscribe(function(message) {
 
 });
 
-
-let x1 = 0;
-let y1 = 0;
-
-let x2 = 0;
-let y2 = 0;
-
-let x3 = 0;
-let y3 = 0;
-
-robotPoseMapTopic1.subscribe(function(message) {
-    x1 = message.pose.pose.position.x;
-    y1 = message.pose.pose.position.y;
-});
-
-robotPoseMapTopic2.subscribe(function(message) {
-    x2 = message.pose.pose.position.x;
-    y2 = message.pose.pose.position.y;
-});
-
-robotPoseMapTopic3.subscribe(function(message) {
-    x3 = message.pose.pose.position.x;
-    y3 = message.pose.pose.position.y;
-});
-
-function reset() {
-    location.reload();
-
-}
 
 const xInput = document.getElementById('x-value-input');
 const yInput = document.getElementById('y-value-input');
@@ -1574,9 +1513,6 @@ function startGoal() {
 
 function cancelGoal() {
     if (robot1.checked) {
-    	const completeText = document.getElementById('goal-text');
-    	completeText.style.color = 'red';
-        completeText.innerHTML = 'Goal cancelled';
 
         var request = new ROSLIB.ServiceRequest({
             goal_info: {
@@ -1596,9 +1532,6 @@ function cancelGoal() {
     }
 
     if (robot2.checked) {
-    	const completeText = document.getElementById('goal-text');
-    	completeText.style.color = 'red';
-        completeText.innerHTML = 'Goal cancelled';
         
         var request = new ROSLIB.ServiceRequest({
             goal_info: {
@@ -1618,9 +1551,6 @@ function cancelGoal() {
     }
 
     if (robot3.checked) {
-    	const completeText = document.getElementById('goal-text');
-        completeText.style.color = 'red';
-        completeText.innerHTML = 'Goal cancelled';
         
         var request = new ROSLIB.ServiceRequest({
             goal_info: {
@@ -1640,9 +1570,6 @@ function cancelGoal() {
     }
 
     if (robot4.checked) {
-    	const completeText = document.getElementById('goal-text');
-    	completeText.style.color = 'red';
-        completeText.innerHTML = 'Goal cancelled';
         
         var request = new ROSLIB.ServiceRequest({
             goal_info: {
@@ -1661,19 +1588,3 @@ function cancelGoal() {
         });
     }
 }
-
-/*
-
-var getTopics = new ROSLIB.Service({
-    ros: ros,
-    name: '/rosapi/topics',
-    serviceType: 'rosapi_msgs/srv/Topics'
-});
-
-getTopics.callService({}, function(result) {
-    topics = result.topics;
-    for (let i = 0; i < topics.length; i++) {
-        console.log(topics[i]);
-    }
-});
-*/
